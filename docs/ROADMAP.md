@@ -12,8 +12,8 @@ A persistent companion system for PI that hatches, grows, and evolves alongside 
 | Uncommon | 30% | 6 species | +0.5% | 1.1x | Green accent |
 | Rare | 15% | 4 species | +1% | 1.2x | Blue accent |
 | Epic | 4% | 2 species + 2 ultra-rare | +2% | 1.5x | Purple + glow effect |
-| Legendary | 0.9% | 1 species + 3 ultra-rare | +5% | 2.0x | Gold border + shimmer |
-| Mythic | 0.001% | 1 exclusive species | +10% | 3.0x | Rainbow animated border |
+| Legendary | 0.10% | 1 species + 3 ultra-rare | +5% | 2.0x | Gold border + shimmer |
+| Mythic | 0.01% | 1 exclusive species | +10% | 3.0x | Rainbow animated border |
 
 **Ultra-Rare Gating:**
 - Epic+ lock: 2 species (Chronling, Voidlet) - only available at Epic or higher
@@ -169,7 +169,7 @@ pi-extension/
 
 **Success Criteria:**
 - `npm test` passes with 100% domain coverage
-- Hatch 100k buddies in simulation, verify Mythic rate ~0.001%
+- Hatch 100k buddies in simulation, verify Mythic rate ~**0.01%**
 - XP math verified for all rarity multipliers
 - Ultra-rare gating works correctly
 
@@ -317,7 +317,7 @@ pi-extension/
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2025-04-04 | Exponential XP curve | Makes high evolution meaningful, 1+ year for Elder |
-| 2025-04-04 | 0.001% Mythic rate | True rarity, hunt mechanics, 1 in 100k |
+| 2025-04-04 | **0.01%** Mythic rate | True rarity, hunt mechanics, 1 in 10k |
 | 2025-04-04 | Tool + Passive XP | Rewards active use and long-term presence |
 | 2025-04-04 | Ultra-rare gating | Gives rarity meaning beyond multiplier |
 | 2025-04-04 | Skills at evolution | Progression unlocks utility, not just visuals |

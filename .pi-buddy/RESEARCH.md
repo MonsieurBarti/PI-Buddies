@@ -130,7 +130,7 @@ Milestone M01 (branch: milestone/M01)
 **Problem:** 11 years for Ascended is unrealistic
 
 **Solution:**
-- **Ascended**: Only accessible to Mythic rarity (0.001% chance)
+- **Ascended**: Only accessible to Mythic rarity (**0.01%** chance)
 - **Prestige System**: At Elder stage, can "prestige" to become rarer
   - Common → Uncommon (keep 20% of XP)
   - Uncommon → Rare (keep 15% of XP)

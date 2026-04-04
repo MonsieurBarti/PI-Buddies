@@ -150,7 +150,7 @@ Images are organized by species folder with stage-based filenames:
 
 **Voidlet:** Dark matter, cosmic void, purple-black with star specks, mysterious, shadowy
 
-### LEGENDARY (3 species, 0.9% hatch rate)
+### LEGENDARY (3 species, **0.10%** hatch rate)
 
 **Solara:** Sun phoenix, golden-orange flames, rebirth motifs, majestic fire bird, radiant
 
@@ -158,7 +158,7 @@ Images are organized by species folder with stage-based filenames:
 
 **Neuralink:** AI consciousness, silver-blue synthetic, neural patterns, learning/evolving feel
 
-### MYTHIC (1 species, 0.1% hatch rate)
+### MYTHIC (1 species, **0.01%** hatch rate)
 
 **Primordial:** Cosmic entity, universe contained, all colors cosmos, starfield body, transcendent
 

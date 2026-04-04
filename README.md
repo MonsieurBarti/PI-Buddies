@@ -8,7 +8,7 @@ Think Tamagotchi meets coding assistant — a virtual pet that lives in your ter
 
 - **🎲 Deterministic Generation** — Same PI user = same buddy potential (prevents save-scumming)
 - **📈 Growth Through Coding** — Your buddy gains XP every time you use PI tools
-- **🌟 True Rarity System** — 6 tiers from Common (50%) to Mythic (0.001%)
+- **🌟 True Rarity System** — 6 tiers from Common (50%) to Mythic (**0.01%**)
 - **⚡ Skill Unlocks** — Utility skills unlock at evolution stages:
   - `/buddy scent` — Find TODOs/FIXMEs in current file (Child+)
   - `/buddy recall` — Semantic search session history (Teen+)
@@ -70,8 +70,8 @@ The core library (`src/`) is PI-agnostic and fully unit-tested. The extension la
 | Uncommon | 30% | 1.1x | 2x (0.048%) |
 | Rare | 15% | 1.2x | 3x (0.072%) |
 | Epic | 4% | 1.5x | 5x (0.12%) |
-| Legendary | 0.9% | 2.0x | 10x (0.24%) |
-| Mythic | 0.001% | 3.0x | 50x (1.2%) |
+| Legendary | **0.10%** | 2.0x | 10x (0.24%) |
+| Mythic | **0.01%** | 3.0x | 50x (1.2%) |
 
 **Ultra-Rare Species:**
 - Epic+: Chronling (time-themed), Voidlet (dark matter)

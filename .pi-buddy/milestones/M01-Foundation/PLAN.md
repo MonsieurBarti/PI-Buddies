@@ -5,7 +5,7 @@ Solid domain layer with complete business logic, thoroughly tested. No PI integr
 
 ## Success Criteria
 - [ ] `npm test` passes with 100% domain coverage
-- [ ] Hatch 100k buddies in simulation, verify Mythic rate ~0.001%
+- [ ] Hatch 100k buddies in simulation, verify Mythic rate ~**0.01%**
 - [ ] XP math verified for all rarity multipliers
 - [ ] Ultra-rare gating works correctly
 

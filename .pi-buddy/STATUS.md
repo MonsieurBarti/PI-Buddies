@@ -28,7 +28,7 @@ All slices complete and ready for PR review:
 1. **Deterministic Generation**: Mulberry32 PRNG seeded from userId hash — same user = same potential
 2. **"Bones vs Soul"**: Bones regenerate from seed (prevents save-scumming), soul persists user data
 3. **25 Species with Gating**: Ultra-rare species locked behind minimum rarity tiers
-4. **6 Rarity Tiers**: Common (50%) → Mythic (0.001%) with weighted roll system
+4. **6 Rarity Tiers**: Common (50%) → Mythic (**0.01%**) with weighted roll system
 5. **Shiny System**: 1/4096 base rate with rarity multipliers (1x → 50x)
 6. **Evolution**: 7 stages (Egg→Ascended) with exponential XP curve
 7. **Hatch Use Case**: Generate 3 buddies for selection UI
