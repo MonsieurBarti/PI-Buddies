@@ -55,17 +55,22 @@ export async function showHatchingOverlay(
 
   // Return first option for now (full TUI integration in future)
   return new Promise((resolve) => {
+    console.error("[PI-Buddy] Hatch overlay starting...");
+
     // For now, just show notifications since full TUI overlay needs proper factory format
     // TODO: Implement proper ctx.ui.custom() factory when PI TUI API is confirmed
     ctx.ui.notify("🐣 Hatching... Choose your companion:", "info");
+    console.error("[PI-Buddy] Sent first notification");
 
     // Check for custom images
     const hasImages = hasBuddyImages();
+    console.error(`[PI-Buddy] Has images: ${hasImages}`);
     if (hasImages) {
       ctx.ui.notify("🖼️ Custom buddy images enabled (~/Downloads/pi-buddies/)", "info");
     }
 
     // Show each option with image info
+    console.error(`[PI-Buddy] Showing ${options.length} options`);
     options.forEach((opt, i) => {
       const species = opt.species as SpeciesName;
       const imgResult = getHatchPreviewImage(species, opt.shiny);
@@ -73,6 +78,7 @@ export async function showHatchingOverlay(
       const shinyText = opt.shiny ? "✨ " : "";
       const fallbackText = imgResult.fallbackStage ? ` [using ${imgResult.fallbackStage}]` : "";
 
+      console.error(`[PI-Buddy] Option ${i + 1}: ${opt.species}`);
       ctx.ui.notify(
         `Option ${i + 1}: ${shinyText}${opt.species} (${opt.rarity}) — ${display}${fallbackText}`,
         "info",
@@ -83,10 +89,14 @@ export async function showHatchingOverlay(
     // TODO: Replace with actual user selection when TUI overlay is ready
     const SELECTION_DELAY_MS = 15000; // 15 seconds to review options
 
+    console.error(`[PI-Buddy] Starting ${SELECTION_DELAY_MS}ms delay`);
     ctx.ui.notify(`⏳ Auto-selecting first buddy in ${SELECTION_DELAY_MS / 1000}s...`, "info");
 
     // Default to first option after delay
-    setTimeout(() => resolve(options[0] ?? null), SELECTION_DELAY_MS);
+    setTimeout(() => {
+      console.error("[PI-Buddy] Auto-selecting first option");
+      resolve(options[0] ?? null);
+    }, SELECTION_DELAY_MS);
   });
 }
 
