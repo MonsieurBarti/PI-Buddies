@@ -70,8 +70,8 @@ If `{stage}.png` missing:
 | **Uncommon** | 6 | 30% | Fuzzle, Drifter, Lumo, Shellbie, Bitling, Whisk |
 | **Rare** | 4 | 15% | Glimmeron, Barkle, Circuit, Aetheroot |
 | **Epic** | 2 | 4% | Chronling, Voidlet |
-| **Legendary** | 3 | 0.9% | Solara, Abysswyrm, Neuralink |
-| **Mythic** | 1 | 0.1% | Primordial |
+| **Legendary** | 3 | **0.10%** | Solara, Abysswyrm, Neuralink |
+| **Mythic** | 1 | **0.01%** | Primordial |
 
 ### Shiny System
 - **Base rate:** 1/4096 (0.024%)
@@ -296,7 +296,7 @@ PI-Buddies/
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2025-04-04 | Exponential XP curve | Makes high evolution meaningful |
-| 2025-04-04 | 0.001% Mythic rate | True rarity, prestige system enables progress |
+| 2025-04-04 | **0.01% Mythic, 0.10% Legendary** | True rarity — feels special when you get one |
 | 2025-04-04 | Tool + Passive XP | Rewards active and long-term use |
 | 2025-04-04 | Ultra-rare gating | Gives rarity meaning beyond multiplier |
 | 2025-04-04 | Skills at evolution | Progression unlocks utility |
