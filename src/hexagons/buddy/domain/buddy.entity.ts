@@ -1,14 +1,14 @@
 import { EvolutionStage, type EvolutionStageValue } from "./evolution.value-object.js";
+import type { RandomProvider } from "./ports/random-provider.port.js";
 import { Rarity, type RarityValue } from "./rarity.value-object.js";
 import { Shiny } from "./shiny.value-object.js";
 import { Species, type SpeciesName } from "./species.value-object.js";
 import { Stats } from "./stats.value-object.js";
 import { Xp } from "./xp.value-object.js";
-import type { RandomProvider } from "./ports/random-provider.port.js";
 
 /**
  * Buddy Entity - The aggregate root for PI Buddy companions
- * 
+ *
  * Design: "Bones" vs "Soul" separation
  * - Bones: Regenerated from deterministic PRNG (species, rarity, stats, shiny)
  * - Soul: Persisted user-defined data (name, personality)
@@ -45,11 +45,7 @@ export class Buddy {
   /**
    * Create a new Buddy from generated bones + user soul
    */
-  static create(
-    bones: BuddyBones,
-    soul: BuddySoul,
-    dynamic?: Partial<BuddyDynamic>,
-  ): Buddy {
+  static create(bones: BuddyBones, soul: BuddySoul, dynamic?: Partial<BuddyDynamic>): Buddy {
     const defaultDynamic: BuddyDynamic = {
       xp: Xp.create(0),
       stage: EvolutionStage.create("baby"),
@@ -67,13 +63,13 @@ export class Buddy {
   static generateBones(userId: string, random: RandomProvider): BuddyBones {
     // Roll rarity first (determines available species pool)
     const rarity = Rarity.roll(() => random.random());
-    
+
     // Roll species based on rarity
     const species = Species.rollForRarity(rarity, () => random.random());
-    
+
     // Roll shiny status
     const shiny = Shiny.roll(rarity, () => random.random());
-    
+
     // Generate stats based on rarity floor
     const stats = Stats.generate(rarity.getMinStatFloor(), () => random.random());
 
@@ -248,18 +244,28 @@ export class Buddy {
    */
   static fromJSON(
     json: {
-      bones: { species: SpeciesName; rarity: RarityValue; shiny: { isShiny: boolean; rollValue: number }; stats: Record<string, number> };
+      bones: {
+        species: SpeciesName;
+        rarity: RarityValue;
+        shiny: { isShiny: boolean; rollValue: number };
+        stats: Record<string, number>;
+      };
       soul: BuddySoul;
-      dynamic: { xp: number; stage: EvolutionStageValue; unlockedSkills: string[]; lastActiveAt: string };
+      dynamic: {
+        xp: number;
+        stage: EvolutionStageValue;
+        unlockedSkills: string[];
+        lastActiveAt: string;
+      };
     },
     random: RandomProvider,
   ): Buddy {
     // Regenerate bones from seed for security (can't manipulate via JSON editing)
     const regeneratedBones = Buddy.generateBones(json.soul.hatchedByUserId, random);
-    
+
     // But preserve the species from saved data (in case of species renames)
     const species = Species.create(json.bones.species);
-    
+
     const bones: BuddyBones = {
       species,
       rarity: regeneratedBones.rarity,

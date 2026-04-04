@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
+import {
+  Mulberry32Provider,
+  createDeterministicProvider,
+} from "../infrastructure/math-random-provider.adapter.js";
 import { Buddy } from "./buddy.entity.js";
 import { EvolutionStage } from "./evolution.value-object.js";
 import { Rarity } from "./rarity.value-object.js";
 import { Species } from "./species.value-object.js";
-import { createDeterministicProvider, Mulberry32Provider } from "../infrastructure/math-random-provider.adapter.js";
 
 describe("Buddy Entity", () => {
   describe("create", () => {
@@ -158,7 +161,7 @@ describe("Buddy Entity", () => {
       // Gain enough to evolve (requires calling checkEvolution)
       buddy.gainXp(50);
       expect(buddy.getXpToNextStage()).toBe(0); // At threshold, needs evolution
-      
+
       // After evolution, need 900 more to reach Teen (1000)
       buddy.checkEvolution();
       expect(buddy.getXpToNextStage()).toBe(900);
@@ -176,7 +179,7 @@ describe("Buddy Entity", () => {
         hatchedByUserId: "test-user",
       };
       const buddy = Buddy.create(bones, soul);
-      
+
       buddy.gainXp(150);
       buddy.checkEvolution();
 
