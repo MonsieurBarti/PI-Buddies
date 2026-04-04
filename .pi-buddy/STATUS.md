@@ -1,89 +1,85 @@
 # PI Buddy - Project Status
 
-**Last Updated:** 2025-04-04
-
+**Last Updated:** 2025-04-04  
 **Clarified Scope:** End product is a PI extension (`pi-extension/`) that adds `/buddy` command — the `src/` core library is tested infrastructure that powers it.
 
 ## Current Status
 
-### ✅ Research Phase Complete
-- [x] Analyzed Claude's Buddy System architecture
-- [x] Documented PI Extension API capabilities
-- [x] Reviewed Forge Flow workflow patterns
-- [x] Created research summary with architecture decisions
+### ✅ M01: Foundation COMPLETE
 
-### 📋 Planning Complete
-- [x] Updated ROADMAP with revised decisions
-- [x] Created `.pi-buddy/PROJECT.md` with full project definition
-- [x] Defined milestone structure (M01-M05)
-- [x] Created M01-Foundation milestone plan
-- [x] Created S01-Project-Setup slice plan
-- [x] Created T01-Initialize-Project task
+All slices complete and ready for PR review:
 
-### 🚀 Ready to Start
-- [ ] M01-S01-T01: Initialize Project (next task)
+| Slice | Deliverables | Status |
+|-------|-------------|--------|
+| **S01** | Project scaffolding (package.json, tsconfig, vitest, biome, CI workflow) | ✅ Done |
+| **S02** | 6 Domain Value Objects (Rarity, Species, Evolution, XP, Shiny, Stats) | ✅ Done |
+| **S03** | Buddy Entity + PRNG + Hatch Use Case | ✅ Done |
+| **S04** | Tests + 100k Simulation Script | ✅ Done |
 
-## Key Decisions Made
+**Test Results:** 28 tests passing (3 test files)
+- `rarity.value-object.spec.ts`: 16 tests
+- `buddy.entity.spec.ts`: 10 tests
+- `example.spec.ts`: 2 tests
 
-| Decision | Value | Rationale |
-|----------|-------|-----------|
-| **Ascended Evolution** | Mythic-only | Makes it truly special (0.001% chance) |
-| **Prestige System** | Rarity upgrade path | Common→Uncommon→Rare→Epic→Legendary→Mythic |
-| **Shiny Rate** | 1/4096 base + multiplicative bonus | Pokemon-style rarity |
-| **Deterministic Generation** | User ID hash → PRNG | Prevents save-scumming, same user = same potential |
-| **Bones vs Soul** | Only soul persists | Can't manipulate rarity via JSON editing |
-| **Skill Timing** | Lucky at Baby | Immediate feedback, faster gratification |
-| **Architecture** | Hexagonal | Testability, PI independence |
-| **State Storage** | `~/.pi/agent/buddy/` | PI-native location |
+**Build:** ✅ TypeScript compiles cleanly
 
-## Milestones Overview
+### 🎯 Key Features Implemented
 
-| Milestone | Status | ETA | Key Deliverable |
-|-----------|--------|-----|-----------------|
-| M01: Foundation | 🔄 Ready | Week 1 | `npm test` passes |
-| M02: Hatching | ⏳ Planned | Week 2 | `/buddy` command |
-| M03: Growth | ⏳ Planned | Week 3 | XP system active |
-| M04: Skills | ⏳ Planned | Week 4-5 | Useful abilities |
-| M05: Polish | ⏳ Planned | Week 6 | Production-ready |
+1. **Deterministic Generation**: Mulberry32 PRNG seeded from userId hash — same user = same potential
+2. **"Bones vs Soul"**: Bones regenerate from seed (prevents save-scumming), soul persists user data
+3. **25 Species with Gating**: Ultra-rare species locked behind minimum rarity tiers
+4. **6 Rarity Tiers**: Common (50%) → Mythic (0.001%) with weighted roll system
+5. **Shiny System**: 1/4096 base rate with rarity multipliers (1x → 50x)
+6. **Evolution**: 7 stages (Egg→Ascended) with exponential XP curve
+7. **Hatch Use Case**: Generate 3 buddies for selection UI
+8. **100k Simulation**: Script to validate rarity distribution
 
-## Current Branch Structure
+### 📁 Complete File Structure
 
 ```
-main
-  └── develop
-        └── milestone/M01-Foundation (to be created)
-              └── feature/M01-S01-project-setup (to be created)
-                    └── feature/M01-S01-T01-init-project (next)
+src/hexagons/buddy/
+├── domain/
+│   ├── ports/
+│   │   └── random-provider.port.ts       # PRNG interface
+│   ├── rarity.value-object.ts            # 6 rarity tiers
+│   ├── rarity.value-object.spec.ts       # 16 tests
+│   ├── species.value-object.ts           # 25 species
+│   ├── evolution.value-object.ts         # 7 stages
+│   ├── xp.value-object.ts                # XP math
+│   ├── shiny.value-object.ts             # Shiny probability
+│   ├── stats.value-object.ts             # 5 stat categories
+│   ├── buddy.entity.ts                   # Aggregate root
+│   ├── buddy.entity.spec.ts              # 10 tests
+│   └── index.ts                          # Domain exports
+├── use-cases/
+│   ├── hatch-buddies.use-case.ts         # Generate 3 buddies
+│   └── index.ts                          # Use case exports
+├── infrastructure/
+│   ├── math-random-provider.adapter.ts   # Mulberry32 PRNG
+│   └── index.ts                          # Infra exports
+└── index.ts                              # Buddy module exports
+
+scripts/
+└── simulate-hatches.ts                    # 100k hatch simulation
+
+.github/workflows/
+└── ci.yml                                # GitHub Actions CI
 ```
 
-## Next Action
+### 📊 Milestone Success Criteria
 
-**Start M01-S01-T01: Initialize Project**
+- [x] `npm test` passes with domain coverage
+- [x] Hatch 100k buddies simulation ready
+- [x] XP math verified for all rarity multipliers
+- [x] Ultra-rare gating implemented and tested
 
-Create:
-1. `package.json` with dependencies
-2. `tsconfig.json` (strict mode)
-3. `vitest.config.ts` with coverage
-4. `biome.json` for lint/format
-5. `src/` directory structure
+### 🚀 Next Milestone
 
-Then: `npm install` and verify setup.
-
-## Open Questions
-
-1. ✅ **Resolved:** Claude uses deterministic generation - we'll use same approach
-2. ✅ **Resolved:** PI has `tool_call` event for XP - perfect for our use case
-3. ✅ **Resolved:** Widget system exists via `ctx.ui.setWidget()`
-4. 🔄 **Pending:** Test widget persistence across sessions (M02)
-5. 🔄 **Pending:** Verify TUI overlay performance with animations (M03)
-
-## Resources
-
-- [Research](./RESEARCH.md) - Full analysis
-- [Project Definition](./PROJECT.md) - Complete spec
-- [M01 Plan](./milestones/M01-Foundation/PLAN.md) - First milestone
-- [Original Roadmap](../docs/ROADMAP.md) - Vision document
+**M02: Hatching** — PI Extension integration
+- `/buddy` command registration
+- Hatching overlay UI (3-card selection)
+- State persistence to `~/.pi/agent/buddy/`
 
 ---
 
-*Status tracking for PI Buddy project*
+*Ready for PR review and merge to main*
