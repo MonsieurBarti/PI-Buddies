@@ -1,7 +1,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { StoredBuddyState } from "./state/buddy-storage.js";
 import { clearBuddyState, loadBuddyState, saveBuddyState } from "./state/buddy-storage.js";
-import { renderBuddyStatus } from "./ui/block-renderer.js";
+import { type BuddyVisual, renderBuddyStatusWidget } from "./ui/buddy-renderer.js";
 import { createHatchOptions, showHatchingOverlay } from "./ui/hatch-overlay.js";
 
 /**
@@ -19,15 +19,23 @@ export default function (pi: ExtensionAPI) {
 
     if (existingBuddy) {
       currentBuddyName = existingBuddy.buddyName;
-      const statusLines = renderBuddyStatus(
-        existingBuddy.buddyName,
-        existingBuddy.species,
-        existingBuddy.rarity,
-        existingBuddy.stage,
+      const visual: BuddyVisual = {
+        species: existingBuddy.species,
+        rarity: existingBuddy.rarity,
+        shiny: existingBuddy.shiny,
+        stage: existingBuddy.stage,
+      };
+      const statusWidget = renderBuddyStatusWidget(
+        visual,
         existingBuddy.xp,
         100, // XP to next stage (placeholder)
       );
-      ctx.ui.setWidget("buddy", statusLines);
+      // Convert Box to string[] for setWidget
+      ctx.ui.setWidget("buddy", [
+        `🐣 ${existingBuddy.buddyName} (${existingBuddy.species})`,
+        `${existingBuddy.rarity} | ${existingBuddy.stage}`,
+        `XP: ${existingBuddy.xp}`,
+      ]);
       ctx.ui.notify(`🐣 Welcome back! ${currentBuddyName} missed you.`, "info");
     } else {
       currentBuddyName = null;
@@ -70,15 +78,19 @@ export default function (pi: ExtensionAPI) {
       } else {
         // Show buddy status with styled widget
         currentBuddyName = existingBuddy.buddyName;
-        const statusLines = renderBuddyStatus(
-          existingBuddy.buddyName,
-          existingBuddy.species,
-          existingBuddy.rarity,
-          existingBuddy.stage,
-          existingBuddy.xp,
-          100, // XP to next stage
-        );
-        ctx.ui.setWidget("buddy-status", statusLines);
+        const visual: BuddyVisual = {
+          species: existingBuddy.species,
+          rarity: existingBuddy.rarity,
+          shiny: existingBuddy.shiny,
+          stage: existingBuddy.stage,
+        };
+        const statusWidget = renderBuddyStatusWidget(visual, existingBuddy.xp, 100);
+        ctx.ui.setWidget("buddy-status", [
+          `✨ ${existingBuddy.buddyName} (${existingBuddy.species})`,
+          `Rarity: ${existingBuddy.rarity}${existingBuddy.shiny ? " ✨" : ""}`,
+          `Stage: ${existingBuddy.stage} | XP: ${existingBuddy.xp}`,
+          `Skills: ${existingBuddy.unlockedSkills.join(", ") || "None yet"}`,
+        ]);
         ctx.ui.notify(`🐣 ${existingBuddy.buddyName} is doing great!`, "success");
       }
     },
