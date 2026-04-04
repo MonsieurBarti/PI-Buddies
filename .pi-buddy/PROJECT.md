@@ -10,7 +10,7 @@ A persistent companion system for PI that hatches, grows, and evolves alongside 
 - Deterministic generation (same PI user = same buddy potential)
 - Growth through actual coding activity (tool call hooks)
 - Utility unlocks at evolution stages (not just cosmetics)
-- True rarity that feels special (Mythic at 0.001%)
+- True rarity that feels special (Mythic at **0.01%**)
 - Prestige system for long-term engagement
 - **Visual progression: 7 evolution stages with pixel art (168 images total)**
 
@@ -250,7 +250,7 @@ PI-Buddies/
 
 ### M01
 - [x] `npm test` passes with 100% domain coverage
-- [x] 100k hatch simulation shows ~0.001% Mythic rate
+- [x] 100k hatch simulation shows ~**0.01%** Mythic rate
 - [x] XP math verified for all rarity multipliers
 - [x] Ultra-rare gating works correctly
 
