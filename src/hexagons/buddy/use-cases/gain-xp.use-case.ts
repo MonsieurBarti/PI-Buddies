@@ -1,5 +1,5 @@
-import { Buddy } from "../domain/buddy.entity.js";
-import { Xp } from "../domain/xp.value-object.js";
+import type { Buddy } from "../domain/buddy.entity.js";
+import type { Xp } from "../domain/xp.value-object.js";
 
 /**
  * Gain XP Use Case

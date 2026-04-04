@@ -1,7 +1,7 @@
 import type { Buddy } from "../../src/hexagons/buddy/domain/buddy.entity.js";
-import { GainXpUseCase } from "../../src/hexagons/buddy/use-cases/gain-xp.use-case.js";
-import { saveBuddyState, loadBuddyState } from "../state/buddy-storage.js";
 import { createDeterministicProvider } from "../../src/hexagons/buddy/infrastructure/math-random-provider.adapter.js";
+import { GainXpUseCase } from "../../src/hexagons/buddy/use-cases/gain-xp.use-case.js";
+import { loadBuddyState, saveBuddyState } from "../state/buddy-storage.js";
 
 /**
  * XP Hook Configuration
@@ -33,12 +33,21 @@ const hookState: XpHookState = {
  */
 export function setupXpOnToolCall(
   pi: {
-    on: (event: string, handler: (event: unknown, ctx: {
-      sessionManager: { getEntries: () => unknown[] };
-      ui: { notify: (msg: string, type: string) => void; setWidget: (id: string, lines: string[]) => void };
-    }) => void) => void;
+    on: (
+      event: string,
+      handler: (
+        event: unknown,
+        ctx: {
+          sessionManager: { getEntries: () => unknown[] };
+          ui: {
+            notify: (msg: string, type: string) => void;
+            setWidget: (id: string, lines: string[]) => void;
+          };
+        },
+      ) => void,
+    ) => void;
   },
-  getUserId: () => string
+  getUserId: () => string,
 ): void {
   // Tool call handler
   pi.on("tool_call", async (event, ctx) => {
@@ -82,10 +91,7 @@ export function setupXpOnToolCall(
 
     // Handle evolution immediately (rare event)
     if (result.evolutionTriggered) {
-      ctx.ui.notify(
-        `🎉 ${buddy.getName()} evolved to ${buddy.getStage().getLabel()}!`,
-        "success"
-      );
+      ctx.ui.notify(`🎉 ${buddy.getName()} evolved to ${buddy.getStage().getLabel()}!`, "success");
       saveBuddyState(pi, buddy);
     }
 
@@ -98,9 +104,11 @@ export function setupXpOnToolCall(
   // Passive XP timer (1 XP per minute while active)
   setInterval(() => {
     const timeSinceLastCall = Date.now() - hookState.lastToolCallTime;
-    if (timeSinceLastCall < 120000) { // PI active in last 2 minutes
+    if (timeSinceLastCall < 120000) {
+      // PI active in last 2 minutes
       const userId = getUserId();
-      const buddyData = loadBuddyState({ getEntries: () => [] } as any);
+      const mockSessionManager = { getEntries: () => [] as unknown[] };
+      const buddyData = loadBuddyState(mockSessionManager);
       if (buddyData) {
         const random = createDeterministicProvider(userId);
         const buddy = reconstructBuddy(buddyData, random);
@@ -119,22 +127,24 @@ function updateWidget(
     ui: { setWidget: (id: string, lines: string[]) => void };
   },
   buddy: Buddy,
-  result: { xpGained: number; totalXp: number }
+  result: { xpGained: number; totalXp: number },
 ): void {
   const stage = buddy.getStage();
   const xpToNext = stage.getXpToNext(buddy.getXp());
-  const progress = xpToNext > 0 
-    ? Math.round((buddy.getXp() / (buddy.getXp() + xpToNext)) * 100)
-    : 100;
+  const progress =
+    xpToNext > 0 ? Math.round((buddy.getXp() / (buddy.getXp() + xpToNext)) * 100) : 100;
 
   const progressBar = "▓".repeat(progress / 10) + "░".repeat(10 - progress / 10);
 
-  ctx.ui.setWidget("buddy-status", [
-    `🐣 ${buddy.getName()} (${buddy.getSpecies().getName()})`,
-    `${buddy.getRarity().getLabel()}${buddy.isShiny() ? " ✨" : ""} | ${stage.getLabel()}`,
-    `XP: ${result.totalXp} / ${result.totalXp + xpToNext} [${progressBar}] ${progress}%`,
-    result.xpGained > 0 ? `+${result.xpGained} XP` : "",
-  ].filter(Boolean));
+  ctx.ui.setWidget(
+    "buddy-status",
+    [
+      `🐣 ${buddy.getName()} (${buddy.getSpecies().getName()})`,
+      `${buddy.getRarity().getLabel()}${buddy.isShiny() ? " ✨" : ""} | ${stage.getLabel()}`,
+      `XP: ${result.totalXp} / ${result.totalXp + xpToNext} [${progressBar}] ${progress}%`,
+      result.xpGained > 0 ? `+${result.xpGained} XP` : "",
+    ].filter(Boolean),
+  );
 }
 
 /**
@@ -142,7 +152,7 @@ function updateWidget(
  */
 function reconstructBuddy(
   data: ReturnType<typeof loadBuddyState>,
-  random: ReturnType<typeof createDeterministicProvider>
+  random: ReturnType<typeof createDeterministicProvider>,
 ): Buddy {
   if (!data) throw new Error("No buddy data");
 
@@ -170,6 +180,6 @@ function reconstructBuddy(
         lastActiveAt: new Date().toISOString(),
       },
     },
-    random
+    random,
   );
 }
