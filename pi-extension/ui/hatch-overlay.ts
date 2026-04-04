@@ -55,18 +55,9 @@ export async function showHatchingOverlay(
 
   // Return first option for now (full TUI integration in future)
   return new Promise((resolve) => {
-    // Create selection UI component
-    const selectionList = renderHatchingSelection(buddies, (index) => {
-      resolve(options[index] ?? null);
-    });
-
-    // Actually display the selection UI if ctx.ui.custom is available
-    if (ctx.ui.custom) {
-      ctx.ui.custom(selectionList);
-    } else {
-      // Fallback: show notifications since full TUI isn't available
-      ctx.ui.notify("🐣 Hatching... Choose your companion:", "info");
-    }
+    // For now, just show notifications since full TUI overlay needs proper factory format
+    // TODO: Implement proper ctx.ui.custom() factory when PI TUI API is confirmed
+    ctx.ui.notify("🐣 Hatching... Choose your companion:", "info");
 
     // Check for custom images
     const hasImages = hasBuddyImages();
