@@ -192,4 +192,53 @@ describe("Buddy Entity", () => {
       expect(restored.getSpecies().getName()).toBe(buddy.getSpecies().getName());
     });
   });
+
+  describe("security - anti-tampering", () => {
+    it("should prevent rarity spoofing via JSON editing", () => {
+      const random = createDeterministicProvider("user-abc");
+      const bones = Buddy.generateBones("user-abc", random);
+      const soul = {
+        name: "Test",
+        personality: "friendly",
+        hatchedAt: new Date().toISOString(),
+        hatchedByUserId: "user-abc",
+      };
+      const buddy = Buddy.create(bones, soul);
+
+      const json = buddy.toJSON();
+      const originalRarity = json.bones.rarity;
+
+      // Try to manipulate JSON to get Mythic rarity
+      json.bones.rarity = "mythic";
+
+      // Create fresh provider (simulates new session loading saved buddy)
+      const restoreRandom = createDeterministicProvider("user-abc");
+      const restored = Buddy.fromJSON(json, restoreRandom);
+
+      // Should regenerate from seed, not use manipulated value
+      expect(restored.getRarity().getValue()).toBe(originalRarity);
+    });
+
+    it("should prevent ultra-rare species spoofing via JSON editing", () => {
+      const random = createDeterministicProvider("user-xyz");
+      const bones = Buddy.generateBones("user-xyz", random);
+      const soul = {
+        name: "Test",
+        personality: "friendly",
+        hatchedAt: new Date().toISOString(),
+        hatchedByUserId: "user-xyz",
+      };
+      const buddy = Buddy.create(bones, soul);
+
+      const json = buddy.toJSON();
+
+      // Try to manipulate JSON to get Primordial (Mythic-only)
+      json.bones.species = "Primordial";
+
+      const restored = Buddy.fromJSON(json, random);
+
+      // Species must be valid for the regenerated rarity
+      expect(restored.getSpecies().isAvailableForRarity(restored.getRarity())).toBe(true);
+    });
+  });
 });
