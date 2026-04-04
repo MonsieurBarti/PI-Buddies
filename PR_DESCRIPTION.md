@@ -15,7 +15,7 @@ This PR implements the **entire M01 Foundation milestone** for the PI Buddy proj
 
 | Object | Key Features |
 |--------|-------------|
-| **Rarity** | 6 tiers (Common 50% → Mythic 0.001%), weighted roll, XP 1.0x-3.0x multipliers, shiny 1x-50x bonuses |
+| **Rarity** | 6 tiers (Common 50% → Mythic 0.01%), weighted roll, XP 1.0x-3.0x multipliers, shiny 1x-50x bonuses |
 | **Species** | 25 species across 5 pools: 8 Common, 6 Uncommon, 4 Rare, 5 Epic+/Legendary+/Mythic ultra-rare |
 | **EvolutionStage** | 7 stages (Egg→Baby→Child→Teen→Adult→Elder→Ascended), exponential XP curve (100→1M) |
 | **XP** | Immutable value object with gain calculations |
@@ -42,25 +42,29 @@ This PR implements the **entire M01 Foundation milestone** for the PI Buddy proj
 - `buddy.entity.spec.ts`: 10 tests (determinism, XP, evolution, serialization)
 - `example.spec.ts`: 2 tests (harness check)
 
-**100k Hatch Simulation Results:**
+**100k Hatch Simulation Results (Updated Rarity):**
 
-| Rarity | Count | Actual % | Expected % | Status |
-|--------|-------|----------|------------|--------|
-| Common | 50,337 | 50.34% | ~50.00% | ✅ |
-| Uncommon | 29,980 | 29.98% | ~30.00% | ✅ |
-| Rare | 14,854 | 14.85% | ~15.00% | ✅ |
-| Epic | 3,958 | 3.96% | ~4.00% | ✅ |
-| Legendary | 858 | 0.86% | ~0.90% | ✅ |
-| Mythic | 13 | 0.01% | ~0.01% | ✅ |
+| Rarity | Count | Actual % | Target % | Status |
+|--------|-------|----------|----------|--------|
+| Common | 50,790 | 50.79% | ~50.00% | ✅ |
+| Uncommon | 30,126 | 30.13% | ~30.00% | ✅ |
+| Rare | 15,014 | 15.01% | ~15.00% | ✅ |
+| Epic | 3,956 | 3.96% | ~4.00% | ✅ |
+| Legendary | **100** | **0.10%** | ~0.10% | ✅ |
+| Mythic | **14** | **0.014%** | ~0.01% | ✅ |
 
-**Shiny Rate:** 33 shinies (0.033%) — within expected range with rarity multipliers ✅
+**Key Changes:**
+- Legendary: 100/100k (was 858) — **8.6× rarer**, truly legendary now
+- Mythic: 14/100k — **~1 in 7,000 hatches**
+- Solara (Legendary+): 3/100k — was 27, now **9× rarer**
+- Abysswyrm/Neuralink: 2-7/100k — properly gated behind Legendary rarity
+
+**Shiny Rate:** 31 shinies (0.031%) — within expected range ✅
 
 **Ultra-Rare Gating Verified:**
-- Chronling: 238 occurrences (84.5% Epic, 15.1% Legendary, 0.4% Mythic) ✅
-- Voidlet: 251 occurrences (82.1% Epic, 17.9% Legendary) ✅
-- Solara/Abysswyrm/Neuralink: 97.8-98% Legendary as expected ✅
-
-All validation checks passed!
+- Chronling: 199 occurrences (96.5% Epic, 3.0% Legendary, 0.5% Mythic) ✅
+- Voidlet: 226 occurrences (96.5% Epic, 3.5% Legendary) ✅
+- Solara/Abysswyrm/Neuralink: All properly at Legendary+ rarity ✅
 
 ## Architecture Decisions
 
