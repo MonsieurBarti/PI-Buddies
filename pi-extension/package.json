@@ -1,0 +1,8 @@
+{
+  "name": "pi-buddy",
+  "version": "0.1.0",
+  "description": "A persistent companion for your coding sessions",
+  "pi": {
+    "extensions": ["./buddy.extension.ts"]
+  }
+}
