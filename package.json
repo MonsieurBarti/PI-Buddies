@@ -6,6 +6,7 @@
     "build": "tsc",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "simulate": "npx tsx scripts/simulate-hatches.ts",
     "test:watch": "vitest",
     "check": "biome check .",
     "check:fix": "biome check . --write",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   },
