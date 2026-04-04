@@ -1,7 +1,7 @@
 import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
 import type { StoredBuddyState } from "../state/buddy-storage.js";
 import { loadBuddyState } from "../state/buddy-storage.js";
-import { renderBuddyStatusWidget, type BuddyVisual } from "../ui/buddy-renderer.js";
+import { type BuddyVisual, renderBuddyStatusWidget } from "../ui/buddy-renderer.js";
 
 /**
  * Status Command Handler

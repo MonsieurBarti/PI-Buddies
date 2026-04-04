@@ -2,7 +2,7 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { handleHatch } from "./commands/hatch.js";
 import { handleStatus } from "./commands/status.js";
 import { clearBuddyState, loadBuddyState, saveBuddyState } from "./state/buddy-storage.js";
-import { renderBuddyStatusWidget, type BuddyVisual } from "./ui/buddy-renderer.js";
+import { type BuddyVisual, renderBuddyStatusWidget } from "./ui/buddy-renderer.js";
 
 /**
  * PI Buddy Extension
@@ -39,7 +39,7 @@ export default function (pi: ExtensionAPI) {
 
       if (!existingBuddy) {
         // First run - start hatching flow
-        const userId = ctx.sessionManager.getUserId?.() || "user-" + Date.now();
+        const userId = ctx.sessionManager.getUserId?.() || `user-${Date.now()}`;
         const buddy = await handleHatch(ctx, userId);
         if (buddy) {
           currentBuddyName = buddy.getName();
