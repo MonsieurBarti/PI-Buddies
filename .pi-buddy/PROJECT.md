@@ -63,6 +63,49 @@ interface StoredBuddy {
 // species, rarity, shiny, stats, eyeStyle
 ```
 
+## Extension Installation (End Goal)
+
+The final product installs as a PI extension:
+
+```bash
+# Install globally
+npm install -g pi-buddy
+
+# Or copy to PI's extension directory
+cp -r pi-extension/ ~/.pi/agent/extensions/pi-buddy/
+```
+
+**Usage:**
+```
+$ pi
+> /buddy           # Hatch or show status
+> /buddy scent     # Find TODOs in current file  
+> /buddy recall    # Search session history
+> /buddy help      # List available commands
+```
+
+## Directory Structure (Revised)
+
+**Two-layer architecture:**
+
+1. **Core Library** (`src/`) - Hexagonal, tested, PI-agnostic
+2. **Extension** (`pi-extension/`) - Thin adapter, PI-specific
+
+```
+PI-Buddies/
+├── pi-extension/           ⭐ SHIPPING PRODUCT
+│   ├── buddy.extension.ts  # Entry point
+│   ├── commands/           # /buddy handlers
+│   ├── ui/                 # TUI components
+│   ├── hooks/              # PI event integration
+│   └── package.json
+├── src/                    # Core library
+│   └── hexagons/buddy/     # Domain, use-cases, infra
+└── .pi-buddy/              # Planning docs
+```
+
+**Design principle:** Domain logic is pure TypeScript. Extension is just wiring.
+
 ## Technical Stack
 
 - **Language:** TypeScript (strict mode)
@@ -71,44 +114,6 @@ interface StoredBuddy {
 - **Formatting:** Biome
 - **PI Integration:** `@mariozechner/pi-coding-agent`
 - **TUI:** `@mariozechner/pi-tui`
-
-## Directory Structure
-
-```
-PI-Buddies/
-├── .pi-buddy/              # Project state & plans
-│   ├── PROJECT.md          # This file
-│   ├── STATUS.md           # Current progress
-│   ├── RESEARCH.md         # Research findings
-│   └── milestones/
-│       ├── M01-Foundation/
-│       │   ├── PLAN.md
-│       │   └── slices/
-│       │       ├── M01-S01-Project-Setup/
-│       │       │   ├── PLAN.md
-│       │       │   └── tasks/
-│       │       │       └── T01/
-│       │       │           ├── TASK.md
-│       │       │           └── ARTIFACTS/
-│       │       ├── M01-S02-Domain-Value-Objects/
-│       │       ├── M01-S03-Buddy-Entity/
-│       │       └── M01-S04-Testing/
-│       ├── M02-Hatching/
-│       ├── M03-Growth/
-│       ├── M04-Skills/
-│       └── M05-Polish/
-├── docs/
-│   ├── ROADMAP.md          # Full vision
-│   ├── SPECIES.md          # 25 species + ASCII art
-│   ├── ARCHITECTURE.md     # Hexagonal deep dive
-│   └── REQUIREMENTS.md     # PRD
-├── src/
-│   ├── hexagons/buddy/     # Hexagonal structure
-│   └── index.ts
-├── pi-extension/
-│   └── buddy.extension.ts  # PI integration
-└── package.json
-```
 
 ## Git Workflow
 
@@ -182,45 +187,14 @@ PI-Buddies/
 | 2025-04-04 | Ascended = Mythic-only | Makes Ascended truly special |
 | 2025-04-04 | Multiplicative shiny bonus | Legendary/Mythic actually have better shiny odds |
 
-## Extension Installation (End Goal)
+## Related Documents
 
-The final product installs as a PI extension:
+- [Research](./RESEARCH.md) - Claude buddy analysis, PI API docs
+- [Roadmap](../docs/ROADMAP.md) - Full vision with species/rarity details
+- [Architecture](../docs/ARCHITECTURE.md) - Hexagonal structure deep dive
+- [Species](../docs/SPECIES.md) - All 25 species with ASCII art
 
-```bash
-# Install globally
-npm install -g pi-buddy
+---
 
-# Or copy to PI's extension directory
-cp -r pi-extension/ ~/.pi/agent/extensions/pi-buddy/
-```
-
-**Usage:**
-```
-$ pi
-> /buddy           # Hatch or show status
-> /buddy scent     # Find TODOs in current file  
-> /buddy recall    # Search session history
-> /buddy help      # List available commands
-```
-
-## Directory Structure (Revised)
-
-**Two-layer architecture:**
-
-1. **Core Library** (`src/`) - Hexagonal, tested, PI-agnostic
-2. **Extension** (`pi-extension/`) - Thin adapter, PI-specific
-
-```
-PI-Buddies/
-├── pi-extension/           ⭐ SHIPPING PRODUCT
-│   ├── buddy.extension.ts  # Entry point
-│   ├── commands/           # /buddy handlers
-│   ├── ui/                 # TUI components
-│   ├── hooks/              # PI event integration
-│   └── package.json
-├── src/                    # Core library
-│   └── hexagons/buddy/     # Domain, use-cases, infra
-└── .pi-buddy/              # Planning docs
-```
-
-**Design principle:** Domain logic is pure TypeScript. Extension is just wiring.
+*Project initialized: 2025-04-04*
+*Framework: Forge Flow CC patterns adapted for PI Buddy*
