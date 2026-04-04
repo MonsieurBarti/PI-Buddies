@@ -3,9 +3,12 @@
 ## Vision
 A persistent companion system for PI that hatches, grows, and evolves alongside the user through coding sessions. Inspired by virtual pets but designed for developer productivity and delight.
 
+**The Product:** A PI extension (`pi-buddy`) that adds the `/buddy` command to PI — install it, run `/buddy`, and your companion appears.
+
 **Core Philosophy:**
-- Deterministic generation (same user = same buddy potential)
-- Growth through actual coding activity
+- Single command entry point: `/buddy` (hatch, status, skills, help)
+- Deterministic generation (same PI user = same buddy potential)
+- Growth through actual coding activity (tool call hooks)
 - Utility unlocks at evolution stages (not just cosmetics)
 - True rarity that feels special (Mythic at 0.001%)
 - Prestige system for long-term engagement
@@ -179,14 +182,45 @@ PI-Buddies/
 | 2025-04-04 | Ascended = Mythic-only | Makes Ascended truly special |
 | 2025-04-04 | Multiplicative shiny bonus | Legendary/Mythic actually have better shiny odds |
 
-## Related Documents
+## Extension Installation (End Goal)
 
-- [Research](./RESEARCH.md) - Claude buddy analysis, PI API docs
-- [Roadmap](../docs/ROADMAP.md) - Full vision with species/rarity details
-- [Architecture](../docs/ARCHITECTURE.md) - Hexagonal structure deep dive
-- [Species](../docs/SPECIES.md) - All 25 species with ASCII art
+The final product installs as a PI extension:
 
----
+```bash
+# Install globally
+npm install -g pi-buddy
 
-*Project initialized: 2025-04-04*
-*Framework: Forge Flow CC patterns adapted for PI Buddy*
+# Or copy to PI's extension directory
+cp -r pi-extension/ ~/.pi/agent/extensions/pi-buddy/
+```
+
+**Usage:**
+```
+$ pi
+> /buddy           # Hatch or show status
+> /buddy scent     # Find TODOs in current file  
+> /buddy recall    # Search session history
+> /buddy help      # List available commands
+```
+
+## Directory Structure (Revised)
+
+**Two-layer architecture:**
+
+1. **Core Library** (`src/`) - Hexagonal, tested, PI-agnostic
+2. **Extension** (`pi-extension/`) - Thin adapter, PI-specific
+
+```
+PI-Buddies/
+├── pi-extension/           ⭐ SHIPPING PRODUCT
+│   ├── buddy.extension.ts  # Entry point
+│   ├── commands/           # /buddy handlers
+│   ├── ui/                 # TUI components
+│   ├── hooks/              # PI event integration
+│   └── package.json
+├── src/                    # Core library
+│   └── hexagons/buddy/     # Domain, use-cases, infra
+└── .pi-buddy/              # Planning docs
+```
+
+**Design principle:** Domain logic is pure TypeScript. Extension is just wiring.

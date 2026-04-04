@@ -2,6 +2,8 @@
 
 **Last Updated:** 2025-04-04
 
+**Clarified Scope:** End product is a PI extension (`pi-extension/`) that adds `/buddy` command — the `src/` core library is tested infrastructure that powers it.
+
 ## Current Status
 
 ### ✅ Research Phase Complete
