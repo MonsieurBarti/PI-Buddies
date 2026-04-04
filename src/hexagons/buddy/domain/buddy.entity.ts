@@ -267,8 +267,8 @@ export class Buddy {
     // This prevents users from editing JSON to get ultra-rare species at low rarities
     const savedSpecies = Species.create(json.bones.species);
     const species = savedSpecies.isAvailableForRarity(regeneratedBones.rarity)
-      ? savedSpecies  // Use saved species if valid for this rarity
-      : regeneratedBones.species;  // Fall back to seed-generated species if spoofed
+      ? savedSpecies // Use saved species if valid for this rarity
+      : regeneratedBones.species; // Fall back to seed-generated species if spoofed
 
     const bones: BuddyBones = {
       species,
