@@ -1,15 +1,19 @@
 # M02: Hatching - Milestone Plan
 
+**Status:** ✅ COMPLETE  
+**Completed:** 2025-04-04  
+**All 4 slices finished and tested**
+
 ## Goal
 Integrate PI Buddy with the PI coding agent. Enable the `/buddy` command, hatching UI overlay, and state persistence. This is where the virtual companion becomes real in the user's terminal.
 
 ## Success Criteria
-- [ ] `/buddy` command registered in PI and responds
-- [ ] First-time hatching shows 3 buddies with selection UI
-- [ ] Buddy state persists across PI sessions (`~/.pi/agent/buddy/`)
-- [ ] Re-running `/buddy` shows existing buddy status (not re-hatch)
-- [ ] All PI event hooks (tool calls) award XP to buddy
-- [ ] Widget displays current buddy above editor when active
+- [x] `/buddy` command registered in PI and responds
+- [x] First-time hatching shows 3 buddies with selection UI
+- [x] Buddy state persists across PI sessions (`~/.pi/agent/buddy/`)
+- [x] Re-running `/buddy` shows existing buddy status (not re-hatch)
+- [ ] All PI event hooks (tool calls) award XP to buddy (M03)
+- [x] Widget displays current buddy above editor when active
 
 ## Slices
 
@@ -186,11 +190,11 @@ pi.on("tool_call", async (event, ctx) => {
 
 ## Definition of Done
 
-- [ ] All slices merged to `milestone/M02-Hatching`
-- [ ] `/buddy` command works in PI
-- [ ] Hatching flow completes end-to-end with styled Unicode blocks
-- [ ] State persists across PI restarts via `pi.appendEntry()`
-- [ ] CI passes on all 3 checks
+- [x] All slices merged to `milestone/M02-Hatching`
+- [x] `/buddy` command works in PI
+- [x] Hatching flow completes end-to-end with styled Unicode blocks
+- [x] State persists across PI restarts via `pi.appendEntry()`
+- [x] CI passes on all 3 checks
 
 ## Related
 
