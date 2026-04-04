@@ -28,69 +28,59 @@
 - [x] Hexagonal directory structure created
 - [x] Branch: `feature/M01-S01-T01-init-project`
 
-### 🔄 Ready for Next
-- [ ] Merge T01 to slice branch / Continue to S02
-- [ ] M01-S02: Domain Value Objects
+### 🔄 M01-S02 IN PROGRESS (Domain Value Objects)
+Created value objects with full type safety:
+- [x] **Rarity** - 6 tiers with weighted probabilities, XP/shiny multipliers
+- [x] **Species** - 25 species with ultra-rare gating (Epic+, Legendary+, Mythic)
+- [x] **EvolutionStage** - 7 stages with XP thresholds and progression logic
+- [x] **XP** - Value object with calculations
+- [x] **Shiny** - 1/4096 base rate with rarity multipliers
+- [x] **Stats** - 5 stats (debugging, patience, chaos, wisdom, snark)
 
-## Key Decisions Made
+Tests: 18 passing (16 for Rarity VO)
 
-| Decision | Value | Rationale |
-|----------|-------|-----------|
-| **Ascended Evolution** | Mythic-only | Makes it truly special (0.001% chance) |
-| **Prestige System** | Rarity upgrade path | Common→Uncommon→Rare→Epic→Legendary→Mythic |
-| **Shiny Rate** | 1/4096 base + multiplicative bonus | Pokemon-style rarity |
-| **Deterministic Generation** | User ID hash → PRNG | Prevents save-scumming, same user = same potential |
-| **Bones vs Soul** | Only soul persists | Can't manipulate rarity via JSON editing |
-| **Skill Timing** | Lucky at Baby | Immediate feedback, faster gratification |
-| **Architecture** | Hexagonal | Testability, PI independence |
-| **State Storage** | `~/.pi/agent/buddy/` | PI-native location |
+### ⏳ Remaining for M01
+- [ ] Buddy Entity (aggregate root with deterministic generation)
+- [ ] In-memory adapters for testing
+- [ ] 100% domain test coverage
+- [ ] 100k hatch simulation
 
-## Milestones Overview
-
-| Milestone | Status | ETA | Key Deliverable |
-|-----------|--------|-----|-----------------|
-| M01: Foundation | 🔄 In Progress (T01 done) | Week 1 | `npm test` passes |
-| M02: Hatching | ⏳ Planned | Week 2 | `/buddy` command |
-| M03: Growth | ⏳ Planned | Week 3 | XP system active |
-| M04: Skills | ⏳ Planned | Week 4-5 | Useful abilities |
-| M05: Polish | ⏳ Planned | Week 6 | Production-ready |
-
-## Current Branch Structure
+## Current Branches
 
 ```
-main
-  └── develop
-        └── milestone/M01-Foundation (to be created)
-              └── feature/M01-S01-project-setup (to be created)
-                    └── feature/M01-S01-T01-init-project ✅ DONE
+main (has README.md)
+  └── feature/M01-S01-T01-init-project (merged T01)
+  └── feature/M01-S02-domain-value-objects (current, has VOs)
 ```
 
-## Next Actions
+## Next Steps
 
-1. **Merge T01 to S01 branch** (if creating)
-2. **Start M01-S02:** Domain Value Objects
-   - Rarity VO with weighted distribution
-   - Species VO with ultra-rare gating
-   - XP VO with exponential curve
-   - Evolution VO with stage thresholds
-   - Shiny VO with probability calculation
-   - Stat VO (5 stat categories)
+1. **Complete M01-S02:** Create tests for remaining VOs, then Buddy Entity
+2. **M01-S03:** Testing & simulation
+3. **Create M01 PR** for review
 
-## Open Questions
+## Key Files Created
 
-1. ✅ **Resolved:** Claude uses deterministic generation
-2. ✅ **Resolved:** PI has `tool_call` event for XP
-3. ✅ **Resolved:** Widget system exists via `ctx.ui.setWidget()`
-4. 🔄 **Pending:** Test widget persistence across sessions (M02)
-5. 🔄 **Pending:** Verify TUI overlay performance with animations (M03)
+```
+src/hexagons/buddy/domain/
+├── rarity.value-object.ts      # 6 rarity tiers with weighted roll
+├── rarity.value-object.spec.ts # 16 tests
+├── species.value-object.ts     # 25 species with gating
+├── evolution.value-object.ts   # 7 evolution stages
+├── xp.value-object.ts          # XP calculations
+├── shiny.value-object.ts       # Shiny probability
+├── stats.value-object.ts       # 5 stat categories
+└── index.ts                    # Domain exports
+```
 
-## Resources
+## Verification Commands
 
-- [Research](./RESEARCH.md) - Full analysis
-- [Project Definition](./PROJECT.md) - Complete spec
-- [M01 Plan](./milestones/M01-Foundation/PLAN.md) - First milestone
-- [Original Roadmap](../docs/ROADMAP.md) - Vision document
+```bash
+npm test        # 18 tests passing
+npm run check   # Biome clean
+npm run build   # TypeScript compiles
+```
 
 ---
 
-*Status tracking for PI Buddy project*
+*Token usage is high - committing progress now. Ready to continue or pause for review.*
