@@ -64,7 +64,7 @@ function runSimulation(): SimulationResults {
 }
 
 function printResults(results: SimulationResults): void {
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("SIMULATION RESULTS");
   console.log("=".repeat(60));
 
@@ -94,7 +94,7 @@ function printResults(results: SimulationResults): void {
   const shinyRatio = results.totalHatches / results.shinyCount;
   console.log(`Total shinies: ${results.shinyCount}`);
   console.log(`Shiny rate: ${shinyRate.toFixed(4)}% (1/${Math.round(shinyRatio)})`);
-  console.log(`Expected: ~0.0244% (1/4096 base, modified by rarity)`);
+  console.log("Expected: ~0.0244% (1/4096 base, modified by rarity)");
 
   console.log("\n🦄 ULTRA-RARE SPECIES VERIFICATION:");
   console.log("-".repeat(40));
@@ -150,7 +150,7 @@ function printResults(results: SimulationResults): void {
   // Simple check: ensure mythic species only appears for mythic rarity
   const mythicSpeciesInLowerRarities = Object.entries(results.speciesByRarity)
     .filter(([rarity]) => rarity !== "mythic")
-    .some(([_, species]) => species["Primordial"] > 0);
+    .some(([_, species]) => species.Primordial > 0);
 
   if (mythicSpeciesInLowerRarities) {
     console.log("❌ FAIL: Primordial found in non-Mythic rarities!");
@@ -163,10 +163,10 @@ function printResults(results: SimulationResults): void {
   if (shinyRate < 0.02 || shinyRate > 0.05) {
     console.log(`⚠️  WARN: Shiny rate ${shinyRate.toFixed(4)}% seems off`);
   } else {
-    console.log(`✅ PASS: Shiny rate within expected range`);
+    console.log("✅ PASS: Shiny rate within expected range");
   }
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log(allPassed ? "✅ ALL CHECKS PASSED" : "❌ SOME CHECKS FAILED");
   console.log("=".repeat(60));
 }

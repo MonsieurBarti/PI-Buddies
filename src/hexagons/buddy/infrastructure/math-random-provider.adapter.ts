@@ -16,6 +16,7 @@ export class Mulberry32Provider implements RandomProvider {
    * Generate next random number (0 to 1)
    */
   random(): number {
+    // biome-ignore lint/suspicious/noAssignInExpressions: Intentional for PRNG algorithm
     let t = (this.state += 0x6d2b79f5);
     t = Math.imul(t ^ (t >>> 15), t | 1);
     t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
