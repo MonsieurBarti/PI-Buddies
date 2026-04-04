@@ -9,10 +9,16 @@ import { createHatchOptions, showHatchingOverlay } from "../ui/hatch-overlay.js"
  * Generates 3 buddies and handles selection
  */
 
-export async function handleHatch(ctx: ExtensionContext, userId: string): Promise<Buddy | null> {
+export async function handleHatch(
+  ctx: ExtensionContext,
+  userId: string,
+  pi: { appendEntry: (type: string, data: unknown) => void },
+): Promise<Buddy | null> {
+  console.error("[PI-Buddy] handleHatch called");
   // Generate 3 buddy options
   const useCase = new HatchBuddiesUseCase();
   const result = useCase.execute({ userId, count: 3 });
+  console.error(`[PI-Buddy] Generated ${result.options.length} buddies`);
 
   // Show hatching UI (selection overlay)
   const options = result.options.map((opt) => ({
@@ -24,7 +30,9 @@ export async function handleHatch(ctx: ExtensionContext, userId: string): Promis
     buddy: opt.buddy,
   }));
 
+  console.error("[PI-Buddy] Calling showHatchingOverlay...");
   const selected = await showHatchingOverlay(ctx, options);
+  console.error(`[PI-Buddy] Selected: ${selected?.species ?? "null"}`);
 
   if (!selected) {
     ctx.ui.notify("Hatching cancelled.", "info");
@@ -39,7 +47,7 @@ export async function handleHatch(ctx: ExtensionContext, userId: string): Promis
   }
 
   // Save to state
-  saveBuddyState(ctx, selectedOption.buddy);
+  saveBuddyState(pi, selectedOption.buddy);
 
   // Notify user
   const shinyText = selectedOption.preview.shiny ? "✨ " : "";
