@@ -263,8 +263,12 @@ export class Buddy {
     // Regenerate bones from seed for security (can't manipulate via JSON editing)
     const regeneratedBones = Buddy.generateBones(json.soul.hatchedByUserId, random);
 
-    // But preserve the species from saved data (in case of species renames)
-    const species = Species.create(json.bones.species);
+    // SECURITY: Validate saved species is allowed for the regenerated rarity
+    // This prevents users from editing JSON to get ultra-rare species at low rarities
+    const savedSpecies = Species.create(json.bones.species);
+    const species = savedSpecies.isAvailableForRarity(regeneratedBones.rarity)
+      ? savedSpecies  // Use saved species if valid for this rarity
+      : regeneratedBones.species;  // Fall back to seed-generated species if spoofed
 
     const bones: BuddyBones = {
       species,
