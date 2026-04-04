@@ -57,40 +57,36 @@ export async function showHatchingOverlay(
   return new Promise((resolve) => {
     console.error("[PI-Buddy] Hatch overlay starting...");
 
-    // For now, just show notifications since full TUI overlay needs proper factory format
-    // TODO: Implement proper ctx.ui.custom() factory when PI TUI API is confirmed
-    ctx.ui.notify("🐣 Hatching... Choose your companion:", "info");
-    console.error("[PI-Buddy] Sent first notification");
-
     // Check for custom images
     const hasImages = hasBuddyImages();
     console.error(`[PI-Buddy] Has images: ${hasImages}`);
+
+    // Batch all info into fewer notifications to avoid UI overflow
+    const lines = ["🐣 Hatching... Choose your companion:"];
+
     if (hasImages) {
-      ctx.ui.notify("🖼️ Custom buddy images enabled (~/Downloads/pi-buddies/)", "info");
+      lines.push("🖼️ Custom buddy images enabled");
     }
 
-    // Show each option with image info
-    console.error(`[PI-Buddy] Showing ${options.length} options`);
-    options.forEach((opt, i) => {
-      const species = opt.species as SpeciesName;
-      const imgResult = getHatchPreviewImage(species, opt.shiny);
-      const display = formatImageResult(imgResult);
-      const shinyText = opt.shiny ? "✨ " : "";
-      const fallbackText = imgResult.fallbackStage ? ` [using ${imgResult.fallbackStage}]` : "";
+    // Add all 3 options as one notification
+    const optionsText = options
+      .map((opt, i) => {
+        const species = opt.species as SpeciesName;
+        const imgResult = getHatchPreviewImage(species, opt.shiny);
+        const shinyText = opt.shiny ? "✨ " : "";
+        const fallbackText = imgResult.fallbackStage ? ` [${imgResult.fallbackStage}]` : "";
+        return `  ${i + 1}. ${shinyText}${opt.species} (${opt.rarity})${fallbackText}`;
+      })
+      .join("\n");
 
-      console.error(`[PI-Buddy] Option ${i + 1}: ${opt.species}`);
-      ctx.ui.notify(
-        `Option ${i + 1}: ${shinyText}${opt.species} (${opt.rarity}) — ${display}${fallbackText}`,
-        "info",
-      );
-    });
+    lines.push("Options:", optionsText);
 
-    // Show options with delay to let user see all 3
-    // TODO: Replace with actual user selection when TUI overlay is ready
-    const SELECTION_DELAY_MS = 15000; // 15 seconds to review options
+    // 15 second delay to review options
+    const SELECTION_DELAY_MS = 15000;
+    lines.push(`⏳ Auto-selecting first buddy in ${SELECTION_DELAY_MS / 1000}s...`);
 
-    console.error(`[PI-Buddy] Starting ${SELECTION_DELAY_MS}ms delay`);
-    ctx.ui.notify(`⏳ Auto-selecting first buddy in ${SELECTION_DELAY_MS / 1000}s...`, "info");
+    // Send as one multi-line notification
+    ctx.ui.notify(lines.join("\n"), "info");
 
     // Default to first option after delay
     setTimeout(() => {
