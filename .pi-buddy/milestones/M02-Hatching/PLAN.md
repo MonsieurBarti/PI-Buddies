@@ -32,36 +32,64 @@ Integrate PI Buddy with the PI coding agent. Enable the `/buddy` command, hatchi
 ---
 
 ### S02: State Persistence
-**Goal:** Buddy state saved to and loaded from disk
+**Goal:** Buddy state saved to and loaded from PI's native storage
 
 **Tasks:**
-- T01: Create FS repository adapter (`~/.pi/agent/buddy/`)
-- T02: Implement buddy serialization/deserialization
+- T01: Use `pi.appendEntry("buddy", data)` for persistence
+- T02: Implement buddy reconstruction from session entries
 - T03: Handle corrupted/missing state gracefully
 - T04: Test persistence round-trip
 
 **Deliverables:**
-- `src/hexagons/buddy/infrastructure/fs-buddy-repository.adapter.ts`
-- Directory creation and file I/O
-- JSON schema validation for stored state
+- `pi-extension/state/buddy-storage.ts` — PI-native storage adapter
+- State reconstruction from `ctx.sessionManager.getEntries()`
 
 **Branch:** `feature/M02-S02-state-persistence`
 
 ---
 
 ### S03: Hatching UI
-**Goal:** Visual hatching overlay with 3-card selection
+**Goal:** Visual hatching overlay with 3-card selection using styled Unicode blocks
 
 **Tasks:**
-- T01: Research PI TUI overlay capabilities
-- T02: Create 3-card buddy preview component
-- T03: Implement selection interaction (arrow keys + enter)
-- T04: Show species ASCII art preview
-- T05: Display rarity indicators and shiny markers
+- T01: Create 3-card buddy preview component using `ctx.ui.custom()`
+- T02: Implement selection interaction (arrow keys + enter)
+- T03: Design styled Unicode block visuals for species silhouettes
+- T04: Add rarity-based color borders via PI themes
+- T05: Display shiny indicators and evolution stage
+
+**Visual Design — Styled Unicode Blocks**
+
+Instead of 125 ASCII art pieces, use **styled Unicode block combinations** for a "pixel art" feel without maintenance burden:
+
+```
+┌─────────────────────────┐
+│    ░░▓▓▓▓▓▓░░          │  ← Species silhouette in blocks
+│   ░▓▓██████▓▓░         │
+│  ░▓██░░░░░░██▓░        │  ← Eyes/patterns with contrast
+│  ░▓██░░██░░██▓░        │
+│   ░▓████████▓░         │
+│    ░░▓▓▓▓▓▓░░          │
+│                         │
+│  ✨ Glimmeron ✨        │  ← Shiny indicator
+│     Rare               │  ← Rarity with color
+└─────────────────────────┘
+```
+
+**Color Strategy:**
+- Use PI's theme system for colored output
+- Rarity-based borders (white=Common, green=Uncommon, blue=Rare, purple=Epic, gold=Legendary, rainbow=Shiny)
+- Evolution-stage sizing (Baby=small blocks, Adult=full size, Elder=ornate frame)
+
+**Benefits:**
+- No 125 art assets to maintain
+- Scalable across all 25 species × 5 stages
+- Still feels "graphical" in terminal
+- Theme-aware (works in light/dark mode)
 
 **Deliverables:**
 - `pi-extension/ui/hatch-overlay.ts` — TUI overlay component
-- `pi-extension/ui/ascii-art.ts` — ASCII art rendering helpers
+- `pi-extension/ui/block-renderer.ts` — Unicode block styling helpers
 - 3-card selection interface with keyboard navigation
 
 **Branch:** `feature/M02-S03-hatching-ui`
@@ -73,7 +101,7 @@ Integrate PI Buddy with the PI coding agent. Enable the `/buddy` command, hatchi
 
 **Tasks:**
 - T01: Wire up hatching use case to UI
-- T02: Save selected buddy to persistence
+- T02: Save selected buddy to PI state via `pi.appendEntry()`
 - T03: Show buddy status on subsequent `/buddy` calls
 - T04: Display XP, stage, and evolution progress
 - T05: Show available skills based on evolution stage
@@ -81,7 +109,7 @@ Integrate PI Buddy with the PI coding agent. Enable the `/buddy` command, hatchi
 **Deliverables:**
 - `pi-extension/commands/hatch.ts` — hatch command handler
 - `pi-extension/commands/status.ts` — status command handler
-- `pi-extension/ui/buddy-status.ts` — status display component
+- `pi-extension/ui/buddy-status.ts` — status widget using `ctx.ui.setWidget()`
 
 **Branch:** `feature/M02-S04-selection-status`
 
@@ -107,78 +135,72 @@ S01 (Extension Skeleton)
 
 **Total: ~6 days** (1 week)
 
-## Technical Considerations
+## Technical Considerations (Verified from PI docs)
 
-### PI Extension Architecture
-Based on research, PI extensions:
-- Register via manifest file
-- Hook into `tool_call` events for XP
-- Use `ctx.ui.custom()` for TUI overlays
-- Use `ctx.ui.setWidget()` for persistent display
-- Store state via `pi.appendEntry()` or direct FS
+### PI Extension API
+Based on https://github.com/badlogic/pi-mono research:
 
-### State Location
+**State Persistence:**
+```typescript
+pi.appendEntry("buddy", buddyData)  // PI-native, survives restarts
 ```
-~/.pi/agent/buddy/
-├── buddies/
-│   └── {user-id}.json
-└── config.json
-```
+- Stored in PI's session format
+- Survives PI updates
+- Retrieve via `ctx.sessionManager.getEntries()`
 
-### TUI Overlay Design
-```
-┌─────────────────────────────────────────────────────┐
-│  🐣 Choose Your Companion (1/3)                      │
-│                                                      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐│
-│  │    ~~~      │  │    ===      │  │    ***      ││
-│  │   (o_o)     │  │   [o_o]     │  │   {o_o}     ││
-│  │    /|\      │  │    /|\      │  │    /|\      ││
-│  │              │  │              │  │              ││
-│  │  Blob       │  │  Spark      │  │  Glimmeron  ││
-│  │  Common     │  │  Common     │  │  Rare ✨    ││
-│  └──────────────┘  └──────────────┘  └──────────────┘│
-│       [↑]              [ ]              [ ]         │
-│                                                      │
-│  Arrow keys to select, Enter to hatch               │
-└─────────────────────────────────────────────────────┘
+**UI Components:**
+```typescript
+ctx.ui.custom()      // Full TUI overlay with keyboard input (for 3-card selection)
+ctx.ui.setWidget()   // Persistent widget above editor (for buddy status)
+ctx.ui.notify()      // Toast notifications (for evolution alerts)
 ```
 
-### XP Hook (for M03 prep)
+**Commands:**
+```typescript
+pi.registerCommand("buddy", handler)  // /buddy command
+```
+
+**XP Hook (M03 prep):**
 ```typescript
 pi.on("tool_call", async (event, ctx) => {
-  // Award XP based on tool type and execution success
-  // This will be fully implemented in M03
-});
+  // Award XP for every tool execution
+})
 ```
+
+### Extension Location
+- `~/.pi/agent/extensions/` (global — all projects)
+- `.pi/extensions/` (project-local)
+
+### Mode Behavior
+- **Interactive mode:** Full TUI overlays work
+- **Print mode:** Widgets no-op, use text output
+- **RPC mode:** UI methods emit requests to client
 
 ## Open Questions
 
-1. **PI Extension API**: Need to verify exact API surface for:
-   - TUI overlay persistence (does it survive across commands?)
-   - Widget placement (can we show above editor?)
-   - Event hooks (can we intercept all tool calls?)
+1. **TUI Overlay Persistence:** Does `ctx.ui.custom()` survive across commands or reset each time? (Need to test)
 
-2. **ASCII Art**: Need to create actual ASCII art for 25 species × 5 evolution stages = 125 art pieces. Start with Baby stage for hatching?
+2. **Widget Placement:** Can `setWidget()` show above editor or only in specific positions?
 
-3. **State Sync**: What happens if user opens multiple PI sessions? (One session should be "primary")
+3. **State Sync:** What happens if user opens multiple PI sessions? (Need to handle "primary" session)
 
 ## Definition of Done
 
 - [ ] All slices merged to `milestone/M02-Hatching`
-- [ ] `milestone/M02-Hatching` merged to `develop`
 - [ ] `/buddy` command works in PI
-- [ ] Hatching flow completes end-to-end
-- [ ] State persists across PI restarts
+- [ ] Hatching flow completes end-to-end with styled Unicode blocks
+- [ ] State persists across PI restarts via `pi.appendEntry()`
 - [ ] CI passes on all 3 checks
 
 ## Related
 
 - [M01 Plan](../M01-Foundation/PLAN.md) — Completed foundation
-- [PI Research](../RESEARCH.md) — PI API analysis
+- [PI Research](../RESEARCH.md) — PI API analysis  
+- [Security Model](../../docs/SECURITY.md) — Anti-tampering details
 - [Architecture](../../docs/ARCHITECTURE.md) — Hexagonal structure
 
 ---
 
-*Milestone plan created: 2025-04-04*
-*Based on research and M01 completion*
+*Milestone plan updated: 2025-04-04*
+*Visuals: Styled Unicode blocks (Option B)*
+*State: PI-native `appendEntry()`*
