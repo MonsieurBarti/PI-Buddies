@@ -1,166 +1,56 @@
 # T01: Initialize Project
 
-## Parent
-[M01-S01: Project Setup](../PLAN.md)
+## Status: ✅ COMPLETE
 
-## Goal
-Create project scaffolding with TypeScript, Vitest, Biome.
+**Completed:** 2025-04-04
 
 ## Acceptance Criteria
-- [ ] `npm install` works
-- [ ] `npm test` runs vitest
-- [ ] `npm run build` compiles TypeScript
-- [ ] `npm run check` runs biome lint+format
-- [ ] `src/` has hexagonal folder structure
+- [x] `npm install` works
+- [x] `npm test` runs vitest (2 tests pass)
+- [x] `npm run build` compiles TypeScript
+- [x] `npm run check` runs biome lint+format (no errors)
+- [x] `src/` has hexagonal folder structure
 
-## Artifacts to Create
+## Verification Commands
 
-### 1. package.json
-```json
-{
-  "name": "@pi-buddy/core",
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest",
-    "check": "biome check .",
-    "check:fix": "biome check . --write",
-    "format": "biome format . --write"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
-  },
-  "dependencies": {
-    "zod": "^3.24.0"
-  }
-}
+```bash
+$ npm test
+ ✓ tests/example.spec.ts (2 tests) 1ms
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+
+$ npm run check
+Checked 15 files in 2ms. No fixes applied.
+
+$ npm run build
+# TypeScript compiles successfully to dist/
 ```
 
-### 2. tsconfig.json
-```json
-{
-  "compilerOptions": {
-    "target": "ES2024",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "lib": ["ES2024"],
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}
-```
+## Artifacts Created
 
-### 3. vitest.config.ts
-```typescript
-import { defineConfig } from 'vitest/config';
+### Configuration Files
+- `package.json` - Dependencies and scripts
+- `tsconfig.json` - TypeScript strict mode, ESM, NodeNext
+- `vitest.config.ts` - Test config with coverage (v8)
+- `biome.json` - Linting and formatting
 
-export default defineConfig({
-  test: {
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'html', 'json'],
-      exclude: [
-        'node_modules/',
-        'dist/',
-        '**/*.d.ts',
-        '**/*.config.*',
-      ],
-    },
-  },
-});
-```
+### Directory Structure
+- `src/hexagons/buddy/` - Hexagonal architecture folders
+- `pi-extension/` - PI extension scaffold
+- `tests/` - Integration tests
 
-### 4. biome.json
-```json
-{
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true
-    }
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineWidth": 100
-  }
-}
-```
-
-### 5. Directory Structure
-```
-src/
-├── hexagons/
-│   └── buddy/
-│       ├── domain/
-│       │   ├── ports/
-│       │   │   ├── buddy-repository.port.ts
-│       │   │   ├── random-provider.port.ts
-│       │   │   ├── time-provider.port.ts
-│       │   │   └── session-analyzer.port.ts
-│       │   ├── errors/
-│       │   │   └── domain.error.ts
-│       │   ├── buddy.entity.ts
-│       │   ├── buddy.schemas.ts
-│       │   ├── rarity.value-object.ts
-│       │   ├── species.value-object.ts
-│       │   ├── xp.value-object.ts
-│       │   ├── evolution.value-object.ts
-│       │   ├── shiny.value-object.ts
-│       │   ├── stats.value-object.ts
-│       │   └── skills.value-object.ts
-│       ├── use-cases/
-│       │   ├── hatch-buddies.use-case.ts
-│       │   ├── select-buddy.use-case.ts
-│       │   ├── gain-xp.use-case.ts
-│       │   ├── tick-passive-xp.use-case.ts
-│       │   ├── check-evolution.use-case.ts
-│       │   ├── use-skill.use-case.ts
-│       │   └── get-buddy-status.use-case.ts
-│       ├── infrastructure/
-│       │   ├── fs-buddy-repository.adapter.ts
-│       │   ├── math-random-provider.adapter.ts
-│       │   ├── system-time-provider.adapter.ts
-│       │   └── gsd-session-analyzer.adapter.ts
-│       └── index.ts
-├── test/
-│   └── setup.ts
-└── index.ts
-```
+### Source Files
+- `src/index.ts` - Library entry point
+- `src/hexagons/buddy/index.ts` - Domain entry point
+- `src/test/setup.ts` - Test utilities
+- `tests/example.spec.ts` - Sample test (passing)
 
 ## Branch
-`feature/M01-S01-T01-init-project`
+`feature/M01-S01-T01-init-project` → merged to `feature/M01-S01-project-setup`
 
 ## Notes
-- Use NodeNext module resolution for ESM
-- Strict TypeScript required
-- Zod for runtime validation (schemas.ts)
-
----
-
-*Task created: 2025-04-04*
+- All 56 npm packages installed successfully
+- Zod 3.24.x available for schema validation
+- Strict TypeScript configured
+- ESM with NodeNext resolution
+- Build output goes to `dist/` (gitignored)
