@@ -1,11 +1,20 @@
 import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
 import type { Box } from "@mariozechner/pi-tui";
+import type { EvolutionStageValue } from "../../src/hexagons/buddy/domain/evolution.value-object.js";
+import type { SpeciesName } from "../../src/hexagons/buddy/domain/species.value-object.js";
 import {
   type BuddyVisual,
   detectImageSupport,
   renderBuddyCard,
   renderHatchingSelection,
 } from "./buddy-renderer.js";
+import {
+  type ImageResolutionResult,
+  formatImageResult,
+  getHatchPreviewImage,
+  hasBuddyImages,
+  resolveBuddyImage,
+} from "./image-resolver.js";
 
 /**
  * Hatch Overlay Component
@@ -50,14 +59,34 @@ export async function showHatchingOverlay(
       resolve(options[index] ?? null);
     });
 
-    // TODO: Use ctx.ui.custom() or tui.showOverlay() for full integration
-    // For now, just preview the options
-    ctx.ui.notify(`Option 1: ${options[0]?.species} (${options[0]?.rarity})`, "info");
-    ctx.ui.notify(`Option 2: ${options[1]?.species ?? "?"} (${options[1]?.rarity ?? "?"})`, "info");
-    ctx.ui.notify(`Option 3: ${options[2]?.species ?? "?"} (${options[2]?.rarity ?? "?"})`, "info");
+    // Check for custom images
+    const hasImages = hasBuddyImages();
+    if (hasImages) {
+      ctx.ui.notify("🖼️ Custom buddy images enabled (~/Downloads/pi-buddies/)", "info");
+    }
 
-    // Default to first option for now
-    setTimeout(() => resolve(options[0] ?? null), 100);
+    // Show each option with image info
+    options.forEach((opt, i) => {
+      const species = opt.species as SpeciesName;
+      const imgResult = getHatchPreviewImage(species, opt.shiny);
+      const display = formatImageResult(imgResult);
+      const shinyText = opt.shiny ? "✨ " : "";
+      const fallbackText = imgResult.fallbackStage ? ` [using ${imgResult.fallbackStage}]` : "";
+
+      ctx.ui.notify(
+        `Option ${i + 1}: ${shinyText}${opt.species} (${opt.rarity}) — ${display}${fallbackText}`,
+        "info",
+      );
+    });
+
+    // Show options with delay to let user see all 3
+    // TODO: Replace with actual user selection when TUI overlay is ready
+    const SELECTION_DELAY_MS = 15000; // 15 seconds to review options
+
+    ctx.ui.notify(`⏳ Auto-selecting first buddy in ${SELECTION_DELAY_MS / 1000}s...`, "info");
+
+    // Default to first option after delay
+    setTimeout(() => resolve(options[0] ?? null), SELECTION_DELAY_MS);
   });
 }
 

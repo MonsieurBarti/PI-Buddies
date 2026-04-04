@@ -40,7 +40,7 @@ export default function (pi: ExtensionAPI) {
       if (!existingBuddy) {
         // First run - start hatching flow
         const userId = ctx.sessionManager.getUserId?.() || `user-${Date.now()}`;
-        const buddy = await handleHatch(ctx, userId);
+        const buddy = await handleHatch(ctx, userId, pi);
         if (buddy) {
           currentBuddyName = buddy.getName();
         }

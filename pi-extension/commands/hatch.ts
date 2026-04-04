@@ -9,7 +9,11 @@ import { createHatchOptions, showHatchingOverlay } from "../ui/hatch-overlay.js"
  * Generates 3 buddies and handles selection
  */
 
-export async function handleHatch(ctx: ExtensionContext, userId: string): Promise<Buddy | null> {
+export async function handleHatch(
+  ctx: ExtensionContext,
+  userId: string,
+  pi: { appendEntry: (type: string, data: unknown) => void },
+): Promise<Buddy | null> {
   // Generate 3 buddy options
   const useCase = new HatchBuddiesUseCase();
   const result = useCase.execute({ userId, count: 3 });
@@ -39,7 +43,7 @@ export async function handleHatch(ctx: ExtensionContext, userId: string): Promis
   }
 
   // Save to state
-  saveBuddyState(ctx, selectedOption.buddy);
+  saveBuddyState(pi, selectedOption.buddy);
 
   // Notify user
   const shinyText = selectedOption.preview.shiny ? "✨ " : "";

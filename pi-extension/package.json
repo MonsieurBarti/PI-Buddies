@@ -1,8 +1,10 @@
 {
-  "name": "pi-buddy",
+  "name": "pi-buddy-extension",
   "version": "0.1.0",
-  "description": "A persistent companion for your coding sessions",
+  "description": "A persistent companion for your PI coding sessions",
   "pi": {
-    "extensions": ["./buddy.extension.ts"]
+    "extensions": [
+      "./buddy.extension.ts"
+    ]
   }
 }
