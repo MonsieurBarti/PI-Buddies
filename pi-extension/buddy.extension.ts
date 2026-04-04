@@ -1,5 +1,6 @@
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
+import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { StoredBuddyState } from "./state/buddy-storage.js";
+import { clearBuddyState, loadBuddyState, saveBuddyState } from "./state/buddy-storage.js";
 
 /**
  * PI Buddy Extension
@@ -7,18 +8,24 @@ import { Type } from "@sinclair/typebox";
  */
 
 export default function (pi: ExtensionAPI) {
-  // Track buddy state (will be loaded from session entries in S02)
-  let hasBuddy = false;
-  const buddyName: string | null = null;
+  // Track buddy state in memory for current session
+  let currentBuddyName: string | null = null;
 
   // Check for existing buddy on session start
   pi.on("session_start", async (event, ctx) => {
-    // TODO: Load buddy from session entries (S02)
-    // For now, assume no buddy exists
-    hasBuddy = false;
+    const existingBuddy = loadBuddyState(ctx.sessionManager);
 
-    if (hasBuddy && buddyName) {
-      ctx.ui.setWidget("buddy", [`🐣 ${buddyName} is here!`, "Type /buddy to check on them."]);
+    if (existingBuddy) {
+      currentBuddyName = existingBuddy.buddyName;
+      ctx.ui.setWidget("buddy", [
+        `🐣 ${currentBuddyName} (${existingBuddy.species})`,
+        `Stage: ${existingBuddy.stage} | XP: ${existingBuddy.xp}`,
+        "Type /buddy to check on them.",
+      ]);
+      ctx.ui.notify(`🐣 Welcome back! ${currentBuddyName} missed you.`, "info");
+    } else {
+      currentBuddyName = null;
+      ctx.ui.notify("🐣 No buddy yet. Type /buddy to hatch one!", "info");
     }
   });
 
@@ -26,24 +33,63 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("buddy", {
     description: "Hatch or check on your PI Buddy companion",
     handler: async (args, ctx) => {
-      if (!hasBuddy) {
+      const existingBuddy = loadBuddyState(ctx.sessionManager);
+
+      if (!existingBuddy) {
         // First run - show hatching UI (S03)
-        ctx.ui.notify("🐣 Time to hatch your buddy! (Coming in S03)", "info");
-
-        // TODO: Show 3-card selection overlay
-        // For now, just acknowledge the command works
-        ctx.ui.notify("Buddy hatching system coming soon...", "info");
+        ctx.ui.notify("🐣 Time to hatch your buddy! (S03 coming soon)", "info");
+        ctx.ui.notify("For now, use /buddy-hatch-demo to create a test buddy", "info");
       } else {
-        // Show buddy status (S04)
-        ctx.ui.notify(`🐣 ${buddyName} is doing great!`, "success");
-
-        // TODO: Show detailed status widget
+        // Show buddy status
+        currentBuddyName = existingBuddy.buddyName;
         ctx.ui.setWidget("buddy-status", [
-          `✨ ${buddyName}`,
-          "Stage: Baby | XP: 0/100",
-          "Skills: None yet",
+          `✨ ${existingBuddy.buddyName} (${existingBuddy.species})`,
+          `Rarity: ${existingBuddy.rarity}${existingBuddy.shiny ? " ✨" : ""}`,
+          `Stage: ${existingBuddy.stage} | XP: ${existingBuddy.xp}`,
+          `Skills: ${existingBuddy.unlockedSkills.join(", ") || "None yet"}`,
         ]);
+        ctx.ui.notify(`🐣 ${existingBuddy.buddyName} is doing great!`, "success");
       }
+    },
+  });
+
+  // Demo command: hatch a test buddy
+  pi.registerCommand("buddy-hatch-demo", {
+    description: "Create a test buddy (demo for S03)",
+    handler: async (args, ctx) => {
+      // Create a mock buddy state
+      const demoBuddy = {
+        version: 1,
+        hatchedAt: new Date().toISOString(),
+        hatchedByUserId: "demo-user",
+        buddyName: args || "Blobby",
+        species: "Blob",
+        rarity: "Common",
+        shiny: false,
+        xp: 0,
+        stage: "baby",
+        unlockedSkills: [],
+      };
+
+      saveBuddyState(pi, demoBuddy as StoredBuddyState);
+      currentBuddyName = demoBuddy.buddyName;
+
+      ctx.ui.notify(`🐣 Hatched ${demoBuddy.buddyName}!`, "success");
+      ctx.ui.setWidget("buddy", [
+        `🐣 ${demoBuddy.buddyName} (${demoBuddy.species})`,
+        `Stage: ${demoBuddy.stage} | XP: ${demoBuddy.xp}`,
+        "Type /buddy to check on them.",
+      ]);
+    },
+  });
+
+  // Demo command: clear buddy
+  pi.registerCommand("buddy-clear", {
+    description: "Clear your buddy (for testing)",
+    handler: async (args, ctx) => {
+      clearBuddyState(pi);
+      currentBuddyName = null;
+      ctx.ui.notify("Buddy cleared. Type /buddy to hatch a new one!", "info");
     },
   });
 
