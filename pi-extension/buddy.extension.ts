@@ -1,6 +1,8 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { StoredBuddyState } from "./state/buddy-storage.js";
 import { clearBuddyState, loadBuddyState, saveBuddyState } from "./state/buddy-storage.js";
+import { renderBuddyStatus } from "./ui/block-renderer.js";
+import { createHatchOptions, showHatchingOverlay } from "./ui/hatch-overlay.js";
 
 /**
  * PI Buddy Extension
@@ -17,11 +19,15 @@ export default function (pi: ExtensionAPI) {
 
     if (existingBuddy) {
       currentBuddyName = existingBuddy.buddyName;
-      ctx.ui.setWidget("buddy", [
-        `🐣 ${currentBuddyName} (${existingBuddy.species})`,
-        `Stage: ${existingBuddy.stage} | XP: ${existingBuddy.xp}`,
-        "Type /buddy to check on them.",
-      ]);
+      const statusLines = renderBuddyStatus(
+        existingBuddy.buddyName,
+        existingBuddy.species,
+        existingBuddy.rarity,
+        existingBuddy.stage,
+        existingBuddy.xp,
+        100, // XP to next stage (placeholder)
+      );
+      ctx.ui.setWidget("buddy", statusLines);
       ctx.ui.notify(`🐣 Welcome back! ${currentBuddyName} missed you.`, "info");
     } else {
       currentBuddyName = null;
@@ -36,18 +42,43 @@ export default function (pi: ExtensionAPI) {
       const existingBuddy = loadBuddyState(ctx.sessionManager);
 
       if (!existingBuddy) {
-        // First run - show hatching UI (S03)
-        ctx.ui.notify("🐣 Time to hatch your buddy! (S03 coming soon)", "info");
-        ctx.ui.notify("For now, use /buddy-hatch-demo to create a test buddy", "info");
+        // First run - show hatching preview (placeholder for full overlay)
+        ctx.ui.notify("🐣 Time to hatch your buddy!", "info");
+
+        // Generate 3 demo options with visuals
+        const demoOptions = [
+          { species: "Blob", rarity: "Common", shiny: false, description: "A friendly blob" },
+          { species: "Spark", rarity: "Uncommon", shiny: false, description: "An energetic spark" },
+          {
+            species: "Glimmeron",
+            rarity: "Rare",
+            shiny: true,
+            description: "A shining rare buddy!",
+          },
+        ];
+
+        const hatchOptions = createHatchOptions(demoOptions);
+
+        // Show preview (full overlay with keyboard nav in future)
+        ctx.ui.notify(`Option 1: ${hatchOptions[0].species} (${hatchOptions[0].rarity})`, "info");
+        ctx.ui.notify(`Option 2: ${hatchOptions[1].species} (${hatchOptions[1].rarity})`, "info");
+        ctx.ui.notify(
+          `Option 3: ${hatchOptions[2].species} (${hatchOptions[2].rarity}) ${hatchOptions[2].shiny ? "✨" : ""}`,
+          "info",
+        );
+        ctx.ui.notify("Use /buddy-hatch-demo <name> to create your buddy!", "info");
       } else {
-        // Show buddy status
+        // Show buddy status with styled widget
         currentBuddyName = existingBuddy.buddyName;
-        ctx.ui.setWidget("buddy-status", [
-          `✨ ${existingBuddy.buddyName} (${existingBuddy.species})`,
-          `Rarity: ${existingBuddy.rarity}${existingBuddy.shiny ? " ✨" : ""}`,
-          `Stage: ${existingBuddy.stage} | XP: ${existingBuddy.xp}`,
-          `Skills: ${existingBuddy.unlockedSkills.join(", ") || "None yet"}`,
-        ]);
+        const statusLines = renderBuddyStatus(
+          existingBuddy.buddyName,
+          existingBuddy.species,
+          existingBuddy.rarity,
+          existingBuddy.stage,
+          existingBuddy.xp,
+          100, // XP to next stage
+        );
+        ctx.ui.setWidget("buddy-status", statusLines);
         ctx.ui.notify(`🐣 ${existingBuddy.buddyName} is doing great!`, "success");
       }
     },
