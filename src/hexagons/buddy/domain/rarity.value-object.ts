@@ -49,14 +49,14 @@ export const RARITY_CONFIG: Record<RarityValue, RarityConfig> = {
     label: "Epic",
   },
   legendary: {
-    weight: 90, // 0.90%
+    weight: 10, // 0.10% (was 0.90%)
     xpMultiplier: 2.0,
     shinyMultiplier: 10,
     minStatFloor: 50,
     label: "Legendary",
   },
   mythic: {
-    weight: 1, // 0.01% (target 0.001%, adjusted in roll logic)
+    weight: 1, // 0.01% (was marked as 0.001% but calculated as 0.01%)
     xpMultiplier: 3.0,
     shinyMultiplier: 50,
     minStatFloor: 75,
